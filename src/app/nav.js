@@ -1,6 +1,10 @@
- import { useState,useEffect } from 'react';
-function Nav({ setShowLogin }) {
+ import React, { useState,useEffect } from 'react';
+ import { BoardContext } from '../context/BoardContext.jsx';
+ import { useContext } from 'react';
 
+function Nav({ setShowLogin }) {
+     
+    const { name } = useContext(BoardContext);
     const [usernav,setUsernav]=useState("sign-Up")
     const showLoginPage = () => {
         setShowLogin(prev => !prev)
@@ -16,6 +20,7 @@ function Nav({ setShowLogin }) {
 
     return (
         <nav className="d-flex justify-content-between container mx-auto">
+    
             <h1>Kanban Board</h1>
 
             <button type="button" className='btn btn-primary my-2' onClick={showLoginPage}>{usernav}</button>
@@ -24,4 +29,4 @@ function Nav({ setShowLogin }) {
     );
 }
 
-export default Nav;
+export default React.memo(Nav);

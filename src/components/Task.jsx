@@ -1,18 +1,16 @@
-export default function Task({ task }) {
-  // NOTE: No user assignment, no drag-and-drop, no delete, no accessibility.
+import React from 'react';
+
+const Task = ({ task }) => {
   return (
-    <div
-      style={{
-        background: '#eee',
-        margin: '4px 0',
-        padding: 4,
-        borderRadius: 4,
-      }}
-    >
-      {task.title}
-      {task.assignedTo && (
-        <span style={{ marginLeft: 8 }}>({task.assignedTo})</span>
-      )}
+    <div className="card mb-2">
+      <div className="card-body p-2">
+        <p className="mb-1">{task.task}</p>
+        {task.username && (
+          <small className="text-muted">Assigned to: {task.username}</small>
+        )}
+      </div>
     </div>
   );
-}
+};
+
+export default Task;

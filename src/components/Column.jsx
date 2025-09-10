@@ -1,44 +1,38 @@
+import React from 'react';
+import {useState,useContext} from "react";
+import { BoardContext } from '../context/BoardContext.jsx';
 import Task from './Task';
-import { useState } from 'react';
 
-export default function Column({ column, setBoard, board }) {
-  const [newTask, setNewTask] = useState('');
+const Column = ({ columnKey, tasks }) => {
+  const [taskText,setTaskText]=useState("");
+  const {addTask}=useContext(BoardContext)
 
-  const handleAdd = async () => {
-    if (!newTask) return;
-    await fetch('/api/board', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        columnId: column.id,
-        task: { title: newTask, assignedTo: null },
-      }),
-    });
-    setNewTask('');
-    // NOTE: Not refetching board, so UI won't update until reload!
-  };
+  const handleAddTask=()=>{
+    if(!taskText.trim()) return;
 
+    addTask({columKey:columnKey,taskText})
+    setTaskText('')
+  }
   return (
-    <div
-      style={{
-        minWidth: 250,
-        border: '1px solid #aaa',
-        borderRadius: 8,
-        padding: 8,
-      }}
-    >
-      <h2>{column.title}</h2>
-      <div>
-        {column.tasks.map((task) => (
-          <Task key={task.id} task={task} />
-        ))}
+    <div className="card shadow-sm">
+      <div className="card-header bg-primary text-white">
+        <h5 className="mb-0">{columnKey}</h5>
       </div>
-      <input
-        value={newTask}
-        onChange={(e) => setNewTask(e.target.value)}
-        placeholder="New task"
-      />
-      <button onClick={handleAdd}>Add</button>
+      <div className="card-body">
+        {tasks.map((task, index) => (
+          <Task key={index} task={task} />
+        ))}
+        <div className="mt-3">
+          <input type="text" 
+          className="form-control mb-2" 
+          placeholder="New task"
+          onChange={(e) => setTaskText(e.target.value)}
+          />
+          <button className="btn btn-outline-primary w-100" onClick={handleAddTask}>Add</button>
+        </div>
+      </div>
     </div>
   );
-}
+};
+
+export default Column;
