@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './Register.css';
+import axios from 'axios';
 // import { useNavigate } from 'react-router-dom';
 
 function Register() {
@@ -13,25 +14,28 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const endpoint = isRegister ? '/api/register' : '/api/user/login';
 
-    try {
-      const res = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
+    const endpoint = isRegister ? 'http://localhost:5000/api/user/register' : 'http://localhost:5000/api/user/login';
 
-      const data = await res.json();
-      if (data.success) {
-        navigate('/dashboard');
-      } else {
-        alert(data.message || 'Action failed');
+  try {
+    const res = await axios.post(endpoint, formData);
+    const data = res.data;
+
+    if (data.success) {
+      if (data.token) {
+        localStorage.setItem('userToken', data.token); // Save user ID
+        localStorage.setItem("userName",data.user.name)
       }
-    } catch (err) {
-      console.error(err);
+      // navigate('/dashboard');
+      alert( isRegister ? 'Registration successful!' : 'Login successful!');
+    } else {
+      alert(data.message || 'Something went wrong');
     }
-  };
+  } catch (err) {
+    console.error('Axios error:', err);
+    alert('Server error');
+  }
+};
 
   return (
     <div className="register-container">
@@ -42,7 +46,7 @@ function Register() {
           <p>{isRegister ? 'Create your account' : 'Sign in to your account'}</p>
 
           <form onSubmit={handleSubmit}>
-            {isRegister ? 
+            {isRegister ?
               <input
                 type="text"
                 name="name"
