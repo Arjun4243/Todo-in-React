@@ -1,44 +1,32 @@
-import { createContext,useEffect,useState } from "react";
+import React, { createContext, useState, useEffect } from 'react';
+
+import axios from 'axios';
 
 export const BoardContext = createContext();
 
-const initialBoard = {
-  toDo: [
-    { status: "to do", userId: "", username: "", task: "Setup project" },
-    { status: "to do", userId: "", username: "", task: "Design wireframes" }
-  ],
-  inProgress: [
-    { status: "in progress", userId: "", username: "", task: "Develop homepage" }
-  ],
-  done: []
+export const BoardProvider = ({ children }) => {
+  const [tasks, setTasks] = useState([]);
+ 
+
+  const fetchTasks = async () => {
+  try {
+
+
+        const res = await axios.get(`http://localhost:5000/api/task/get`);
+
+   setTasks(res.data.tasks);  } catch (err) {
+    console.error('Error fetching tasks:', err);
+  }
 };
 
-export function BoardProvider({children}){
 
-    const [board,setBoard]=useState(initialBoard)
+  useEffect(() => {
+    fetchTasks();
+  }, []);
 
-    const addTask=({columKey,taskText})=>{
-        
-        const newTask={
-            status: columKey,
-            userId: "",
-            username: "",
-            task: taskText
-        }
-
-        setBoard(prev=>({
-            ...prev,
-            [columKey]:[...prev[columKey],newTask]
-        }))
-    }
-
-
-
-    return(
-        <BoardContext.Provider value={{board,addTask}}>
-            {children}
-        </BoardContext.Provider>
-    )
-}
-
-
+  return (
+    <BoardContext.Provider value={{ tasks, fetchTasks }}>
+      {children}
+    </BoardContext.Provider>
+  );
+};

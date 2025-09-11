@@ -5,3 +5,5 @@
     ],
 
     my data save in this form like thi toDo:[{status:"["to do","in Progress","done"], useid:"",username:"",task:""} inProgress:[{status:"["to do","in Progress","done"], useid:"",username:"",task:""}done:[{status:"["to do","in Progress","done"], useid:"",username:"",task:""}in backend ok and i will add the functionaly as suppose if someone update it take statuse it i progress thatn it remove frome that and it put in the progress database
+
+

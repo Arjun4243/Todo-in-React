@@ -1,34 +1,58 @@
-import React from 'react';
-import {useState,useContext} from "react";
-import { BoardContext } from '../context/BoardContext.jsx';
-import Task from './Task';
+import React, { useState, useContext } from 'react';
+import axios from 'axios';
+import Task from './Task.jsx';
+import { BoardContext } from '../context/BoardContext';
 
-const Column = ({ columnKey, tasks }) => {
-  const [taskText,setTaskText]=useState("");
-  const {addTask}=useContext(BoardContext)
+const Column = ({ title, status, tasks }) => {
+  const [taskText, setTaskText] = useState('');
+  const { fetchTasks } = useContext(BoardContext);
 
-  const handleAddTask=()=>{
-    if(!taskText.trim()) return;
+  const userId = localStorage.getItem('userToken');
+  const userName = localStorage.getItem('userName');
 
-    addTask({columKey:columnKey,taskText})
-    setTaskText('')
-  }
+  const addTask = async () => {
+    if (!taskText.trim()) return;
+
+    try {
+      await axios.post('http://localhost:5000/api/task/add', {
+        task: taskText,
+        status,
+        userId,
+        userName
+      });
+      setTaskText('');
+      fetchTasks();
+    } catch (err) {
+      console.error('Error adding task:', err);
+    }
+  };
+
   return (
-    <div className="card shadow-sm">
-      <div className="card-header bg-primary text-white">
-        <h5 className="mb-0">{columnKey}</h5>
-      </div>
-      <div className="card-body">
-        {tasks.map((task, index) => (
-          <Task key={index} task={task} />
-        ))}
-        <div className="mt-3">
-          <input type="text" 
-          className="form-control mb-2" 
-          placeholder="New task"
-          onChange={(e) => setTaskText(e.target.value)}
+    <div className="col-md-4">
+      <div className="card mb-4 shadow-sm">
+        <div className="card-header bg-primary text-white">
+          <h5 className="mb-0">{title}</h5>
+        </div>
+        
+          {tasks.length === 0 ? ( 
+            <p className="text-muted">No tasks</p>
+          ) : (
+            tasks.map((task, index) => (
+              <Task key={task._id} task={task} index={index + 1} />
+            ))
+          )}
+
+        <div className="card-body">
+          <input
+            type="text"
+            className="form-control mb-2"
+            placeholder="Enter task"
+            value={taskText}
+            onChange={(e) => setTaskText(e.target.value)}
           />
-          <button className="btn btn-outline-primary w-100" onClick={handleAddTask}>Add</button>
+          <button className="btn btn-sm btn-success mb-3" onClick={addTask}>
+            Add Task
+          </button>
         </div>
       </div>
     </div>

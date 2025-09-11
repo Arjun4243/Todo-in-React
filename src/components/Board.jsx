@@ -1,21 +1,25 @@
 import React, { useContext } from 'react';
-import { BoardContext } from '../context/BoardContext.jsx';
+import { BoardContext } from '../context/BoardContext';
 import Column from './Column';
 
-const Board = () => {
-  const { board } = useContext(BoardContext);
+function Board() {
+  const { tasks } = useContext(BoardContext);
+
+  const grouped = {
+    toDo: tasks.filter(t => t.status === 'toDo'),
+    inProgress: tasks.filter(t => t.status === 'inProgress'),
+    done: tasks.filter(t => t.status === 'done')
+  };
 
   return (
-    <div className="container-fluid bg-light py-4">
+    <div className="container mt-4">
       <div className="row">
-        {Object.keys(board).map((columnKey) => (
-          <div className="col-md-4 mb-3" key={columnKey}>
-            <Column columnKey={columnKey} tasks={board[columnKey]} />
-          </div>
-        ))}
+        <Column title="To Do" status="toDo" tasks={grouped.toDo} />
+        <Column title="In Progress" status="inProgress" tasks={grouped.inProgress} />
+        <Column title="Done" status="done" tasks={grouped.done} />
       </div>
     </div>
   );
-};
+}
 
 export default Board;

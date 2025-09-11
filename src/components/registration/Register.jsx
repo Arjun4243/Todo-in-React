@@ -20,6 +20,7 @@ function Register() {
   try {
     const res = await axios.post(endpoint, formData);
     const data = res.data;
+    
 
     if (data.success) {
       if (data.token) {

@@ -1,5 +1,5 @@
 import express from 'express';
-import userController from '../controller/registerUser.js';
+import userController from '../controller/RegisterUser.js';
 const { registerUser, userLogin } = userController;
 
 

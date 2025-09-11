@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 import cors from 'cors';
 import userRouter from './Router/User.js';
+import taskRouter from './Router/Task.js';
 
 dotenv.config();
 const app = express();
@@ -15,13 +16,14 @@ const startServer = async () => {
   try {
     await connectDB(); // ✅ Wait for DB connection
 
-    app.use("/api/user", userRouter); // ✅ Register routes after DB is ready
+    app.use("/api/user", userRouter);
+    app.use("/api/task",taskRouter) //  Register routes after DB is ready
 
     app.listen(PORT, () => {
-      console.log("✅ Server is running on port", PORT);
+      console.log(" Server is running on port", PORT);
     });
   } catch (error) {
-    console.error("❌ Failed to start server:", error);
+    console.error(" Failed to start server:", error);
   }
 };
 
