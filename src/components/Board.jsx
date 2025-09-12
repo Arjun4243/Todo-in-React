@@ -19,6 +19,8 @@ function Board() {
   };
 
   const onDragEnd = useCallback((result) => {
+
+    console.log(result);
   const { source, destination, draggableId } = result;
 
   if (!destination) return;
@@ -27,7 +29,7 @@ function Board() {
   const updatedTasks = [...tasks];
 
   // Find the dragged task
-  const draggedTaskIndex = updatedTasks.findIndex(task => task._id === draggableId);
+  const draggedTaskIndex = updatedTasks.findIndex(e => e._id === draggableId);
   const draggedTask = updatedTasks[draggedTaskIndex];
 
   if (!draggedTask) return;
@@ -43,6 +45,7 @@ function Board() {
 
   // Insert at the correct index
   const before = updatedTasks.filter(task => task.status !== destination.droppableId);
+
   destinationTasks.splice(destination.index, 0, draggedTask);
 
   // Merge back
@@ -50,6 +53,7 @@ function Board() {
 
   // Update state
   setTasks(finalTasks);
+  console.log(tasks)
 }, [tasks, setTasks]);
 
 
