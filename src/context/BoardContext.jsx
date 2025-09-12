@@ -6,18 +6,18 @@ export const BoardContext = createContext();
 
 export const BoardProvider = ({ children }) => {
   const [tasks, setTasks] = useState([]);
- 
+
 
   const fetchTasks = async () => {
-  try {
 
+    try {
+      const res = await axios.get(`http://localhost:5000/api/task/get`);
 
-        const res = await axios.get(`http://localhost:5000/api/task/get`);
-
-   setTasks(res.data.tasks);  } catch (err) {
-    console.error('Error fetching tasks:', err);
-  }
-};
+      setTasks(res.data.tasks);
+    } catch (err) {
+      console.error('Error fetching tasks:', err);
+    }
+  };
 
 
   useEffect(() => {
@@ -25,7 +25,7 @@ export const BoardProvider = ({ children }) => {
   }, []);
 
   return (
-    <BoardContext.Provider value={{ tasks, fetchTasks }}>
+    <BoardContext.Provider value={{ tasks, fetchTasks, setTasks }}>
       {children}
     </BoardContext.Provider>
   );

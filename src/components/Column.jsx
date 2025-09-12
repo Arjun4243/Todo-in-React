@@ -2,6 +2,12 @@ import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import Task from './Task.jsx';
 import { BoardContext } from '../context/BoardContext';
+import {
+  DragDropContext,
+  Droppable,
+  Draggable
+} from '@hello-pangea/dnd';
+
 
 const Column = ({ title, status, tasks }) => {
   const [taskText, setTaskText] = useState('');
@@ -33,14 +39,39 @@ const Column = ({ title, status, tasks }) => {
         <div className="card-header bg-primary text-white">
           <h5 className="mb-0">{title}</h5>
         </div>
-        
-          {tasks.length === 0 ? ( 
-            <p className="text-muted">No tasks</p>
-          ) : (
-            tasks.map((task, index) => (
-              <Task key={task._id} task={task} index={index + 1} />
-            ))
-          )}
+
+
+        <Droppable
+  droppableId={status}
+  isDropDisabled={false}
+  isCombineEnabled={false}
+  ignoreContainerClipping={false} // ✅ Add this line
+>
+  {(provided, snapshot) => (
+    <div
+      ref={provided.innerRef}
+      {...provided.droppableProps}
+      className="task-list"
+      style={{
+        minHeight: '100px',
+        backgroundColor: snapshot.isDraggingOver ? '#f0f8ff' : 'transparent',
+        padding: '8px'
+      }}
+    >
+      {tasks.length === 0 ? (
+        <p className="text-muted">No tasks</p>
+      ) : (
+        tasks.map((task, index) => (
+          <Task key={task._id} task={task} index={index} />
+        ))
+      )}
+      {provided.placeholder}
+    </div>
+  )}
+</Droppable>
+
+
+
 
         <div className="card-body">
           <input

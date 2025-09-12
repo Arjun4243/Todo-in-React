@@ -1,16 +1,32 @@
-import React from 'react';
+import {
+  DragDropContext,
+  Droppable,
+  Draggable
+} from '@hello-pangea/dnd';
 
-const Task = ({ task, index }) => {
+
+function Task({ task, index }) {
   return (
-    <div className="card mb-2 border-secondary">
-      <div className="card-body p-2">
-        <p className="mb-1">
-          <strong>{index}. </strong>{task.task}
-        </p>
-        <small className="text-muted">Write: {task.userName}</small>
-      </div>
-    </div>
+
+    <Draggable draggableId={task._id} index={index}>
+      {(provided) => (
+        <div
+          className="card mb-2"
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+      
+        >
+          <div className="card-body">
+            <p className="card-text">{task.task}</p>
+            <small className="text-muted">By: {task.userName}</small>
+          </div>
+          {provided.placeholder}
+        </div>
+      )}
+    </Draggable>
+
   );
-};
+}
 
 export default Task;
