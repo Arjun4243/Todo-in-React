@@ -1,10 +1,8 @@
  import React, { useState,useEffect } from 'react';
- import { BoardContext } from '../context/BoardContext.jsx';
- import { useContext } from 'react';
 
 function Nav({ setShowLogin }) {
-     
-    const { name } = useContext(BoardContext);
+
+
     const [usernav,setUsernav]=useState("sign-Up")
     const showLoginPage = () => {
         setShowLogin(prev => !prev)
