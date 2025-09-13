@@ -17,7 +17,7 @@ function Task({ task, index }) {
           {...provided.dragHandleProps}
       
         >
-          <div className="card-body">
+          <div className="card-body" style={{background:"#f9e9d2"}}>
             <p className="card-text">{task.task}</p>
             <small className="text-muted">By: {task.userName}</small>
           </div>

@@ -74,7 +74,7 @@ useEffect(() => {
     if (e.success) {
      
       toast(e.message, {
-position: "top-left",
+position: "bottom-left",
 autoClose: 5000,
 hideProgressBar: false,
 closeOnClick: false,

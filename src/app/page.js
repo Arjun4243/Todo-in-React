@@ -14,22 +14,11 @@ export default function Home() {
   const [loginShow, setLoginShow] = useState(false)
 
   return (
-    <div>
+    <div style={{backgroundColor:"#d9d9d9",height:"100vh"}}>
       <BoardProvider>
-        <ToastContainer 
-position="top-left"
-autoClose={5000}
-hideProgressBar={false}
-newestOnTop={false}
-closeOnClick={false}
-rtl={false}
-pauseOnFocusLoss
-draggable
-pauseOnHover
-theme="light"
-transition={Slide} />
+        <ToastContainer position="bottom-left" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick={false} rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="light" transition={Slide} />
         <Nav setShowLogin={setLoginShow} />
-        {loginShow ? <Register /> : <Board board={board} setBoard={setBoard} />}
+        {loginShow ? <Register /> : <Board  board={board} setBoard={setBoard} />}
       </BoardProvider>
     </div>
   );
