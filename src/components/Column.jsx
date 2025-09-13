@@ -1,20 +1,25 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext ,useEffect} from 'react';
 import axios from 'axios';
 import Task from './Task.jsx';
 import { BoardContext } from '../context/BoardContext';
-import {
-  DragDropContext,
-  Droppable,
-  Draggable
-} from '@hello-pangea/dnd';
+import {Droppable,} from '@hello-pangea/dnd';
 
 
 const Column = ({ title, status, tasks }) => {
   const [taskText, setTaskText] = useState('');
   const { fetchTasks } = useContext(BoardContext);
+  const [userId,setUserId]=useState()
+  const [userName,setUserName]=useState()
 
+useEffect(() => {
   const userId = localStorage.getItem('userToken');
   const userName = localStorage.getItem('userName');
+
+  setUserId(userId)
+  setUserName(userName)
+
+}, []);
+
 
   const addTask = async () => {
     if (!taskText.trim()) return;

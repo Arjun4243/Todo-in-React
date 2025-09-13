@@ -2,6 +2,7 @@ import { useContext,useCallback,useEffect } from 'react';
 import { BoardContext } from '../context/BoardContext';
 import Column from './Column';
 import {  DragDropContext,} from '@hello-pangea/dnd';
+import { toast,Slide ,hideProgressBar} from 'react-toastify';
 
 
 
@@ -71,7 +72,18 @@ useEffect(() => {
 
   socket.on("responseUpdateTask", (e) => {
     if (e.success) {
-      alert(e.message);
+     
+      toast(e.message, {
+position: "top-left",
+autoClose: 5000,
+hideProgressBar: false,
+closeOnClick: false,
+pauseOnHover: true,
+draggable: true,
+progress: undefined,
+theme: "light",
+transition: Slide,
+});
     }
   });
 
