@@ -1,3 +1,4 @@
+
 import express from 'express';
 import dotenv from 'dotenv';
 import connectDB from './config/db.js';
@@ -6,6 +7,7 @@ import userRouter from './Router/User.js';
 import taskRouter from './Router/Task.js';
 import http from 'http';
 import { Server } from 'socket.io';
+import socketHandler from './socket/socketHandler.js';
 
 dotenv.config();
 const app = express();
@@ -18,15 +20,18 @@ app.use(cors());
 app.use("/api/user", userRouter);
 app.use("/api/task", taskRouter);
 
-// Create HTTP server and attach Socket.IO
+// Create HTTP server and attach Socket.IO with CORS config
 const server = http.createServer(app);
-const io = new Server(server);
-
-io.on("connection", (socket) => {
-  console.log("🟢 A new user connected:", socket.id);
-
+const io = new Server(server, {
+  cors: {
+    origin: "*", // Allow all origins (or specify your frontend URL)
+    
+  }
 });
 
+// Handle Socket.IO connections
+
+socketHandler(io)
 // Start everything after DB connects
 const startServer = async () => {
   try {

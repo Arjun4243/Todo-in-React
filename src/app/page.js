@@ -13,11 +13,7 @@ export default function Home() {
 
 const [loginShow,setLoginShow]=useState(false)
 
-  useEffect(() => {
-    fetch('/api/board')
-      .then((res) => res.json())
-      .then(setBoard);
-  });
+ 
 
   if (!board) return <div>Loading...</div>;
 

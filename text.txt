@@ -7,3 +7,5 @@
     my data save in this form like thi toDo:[{status:"["to do","in Progress","done"], useid:"",username:"",task:""} inProgress:[{status:"["to do","in Progress","done"], useid:"",username:"",task:""}done:[{status:"["to do","in Progress","done"], useid:"",username:"",task:""}in backend ok and i will add the functionaly as suppose if someone update it take statuse it i progress thatn it remove frome that and it put in the progress database
 
 
+5) [{…}, {…}, {…}, {…}, {…}]0: {_id: '68c5539ef5161e6c6226c937', status: 'inProgress', task: 'laptop', userId: '68c15425514c3fef9646e314', userName: 'arjun', …}1: {_id: '68c553a4f5161e6c6226c93b', status: 'inProgress', task: 'pc', userId: '68c15425514c3fef9646e314', userName: 'arjun', …}2: {_id: '68c553b3f5161e6c6226c93f', status: 'done', task: 'complete', userId: '68c15425514c3fef9646e314', userName: 'arjun', …}3: {_id: '68c55394f5161e6c6226c933', status: 'toDo', task: 'keyBoard', userId: '68c15425514c3fef9646e314', userName: 'arjun', …}4: {_id: '68c5538af5161e6c6226c92f', status: 'toDo', task: 'mouse', userId: '68c15425514c3fef9646e314', userName: 'arjun', …}length: 5[[Prototype]]: Array(0)
+

@@ -1,16 +1,14 @@
-import React, { useContext,useCallback } from 'react';
+import { useContext,useCallback,useEffect } from 'react';
 import { BoardContext } from '../context/BoardContext';
 import Column from './Column';
-import {
-  DragDropContext,
-  Droppable,
-  Draggable
-} from '@hello-pangea/dnd';
+import {  DragDropContext,} from '@hello-pangea/dnd';
+
+
 
 
 function Board() {
 
-    const { tasks, setTasks } = useContext(BoardContext);
+    const { tasks, setTasks,socket } = useContext(BoardContext);
 
   const grouped = {
     toDo: tasks.filter(t => t.status === 'toDo'),
@@ -48,13 +46,40 @@ function Board() {
 
   destinationTasks.splice(destination.index, 0, draggedTask);
 
+  
+
   // Merge back
   const finalTasks = [...before, ...destinationTasks];
+  
+  
+  const userNameUpdate= localStorage.getItem("userName")
 
-  // Update state
+
+  
+socket.emit("updateTask", {
+  _id: draggedTask._id,
+  status: draggedTask.status,
+  userName: userNameUpdate
+});
+
   setTasks(finalTasks);
-  console.log(tasks)
+
 }, [tasks, setTasks]);
+
+useEffect(() => {
+  if (!socket) return;
+
+  socket.on("responseUpdateTask", (e) => {
+    if (e.success) {
+      alert(e.message);
+    }
+  });
+
+  return () => {
+    socket.off("responseUpdateTask");
+  };
+}, [socket]);
+
 
 
   return (
