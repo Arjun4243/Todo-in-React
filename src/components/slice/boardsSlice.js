@@ -1,28 +1,60 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { socket } from './taskSlice';
 
 // Async thunk for fetching boards
-export const fetchBoards = createAsyncThunk('boards/fetchBoards', async () => {
-  const response = await axios.get('http://localhost:5000/api/board/get');
-  return response.data.boards;
+export const fetchBoards = createAsyncThunk('boards/fetchBoards', async (_, thunkAPI) => {
+  return new Promise((resolve, reject) => {
+    socket.emit('board/fetchBoards');
+    socket.on('fetchBoards', (data) => {
+      if (data.success) {
+        resolve(data.boards);
+      } else {
+        reject(data.message);
+      }
+    });
+  });
 });
 
 // Async thunk for adding a board
-export const addBoard = createAsyncThunk('boards/addBoard', async (boardData) => {
-  const response = await axios.post('http://localhost:5000/api/board/add', boardData);
-  return response.data.board;
+export const addBoard = createAsyncThunk('boards/addBoard', async (boardData, thunkAPI) => {
+  return new Promise((resolve, reject) => {
+    socket.emit('board/addBoard', boardData);
+    socket.on('addBoard', (data) => {
+      if (data.success) {
+        resolve(data.board);
+      } else {
+        reject(data.message);
+      }
+    });
+  });
 });
 
 // Async thunk for updating a board
-export const updateBoard = createAsyncThunk('boards/updateBoard', async ({ _id, ...updates }) => {
-  const response = await axios.put(`http://localhost:5000/api/board/update/${_id}`, updates);
-  return response.data.board;
+export const updateBoard = createAsyncThunk('boards/updateBoard', async ({ _id, ...updates }, thunkAPI) => {
+  return new Promise((resolve, reject) => {
+    socket.emit('board/updateBoard', { _id, ...updates });
+    socket.on('updateBoard', (data) => {
+      if (data.success) {
+        resolve(data.board);
+      } else {
+        reject(data.message);
+      }
+    });
+  });
 });
 
 // Async thunk for deleting a board
-export const deleteBoard = createAsyncThunk('boards/deleteBoard', async (_id) => {
-  await axios.delete(`http://localhost:5000/api/board/delete/${_id}`);
-  return _id;
+export const deleteBoard = createAsyncThunk('boards/deleteBoard', async (_id, thunkAPI) => {
+  return new Promise((resolve, reject) => {
+    socket.emit('board/deleteBoard', { _id });
+    socket.on('deleteBoard', (data) => {
+      if (data.success) {
+        resolve(_id);
+      } else {
+        reject(data.message);
+      }
+    });
+  });
 });
 
 const boardsSlice = createSlice({

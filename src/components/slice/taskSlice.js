@@ -5,24 +5,57 @@ import { io } from 'socket.io-client';
 export const socket = io('http://localhost:5000');
 
 // 🔄 Async thunk for fetching tasks
-export const fetchTasks = createAsyncThunk('tasks/fetchTasks', async () => {
-  const response = await axios.get('http://localhost:5000/api/task/get');
-  return response.data.tasks;
+export const fetchTasks = createAsyncThunk('tasks/fetchTasks', async (_, thunkAPI) => {
+  return new Promise((resolve, reject) => {
+    socket.emit('task/fetchTasks');
+    const timeout = setTimeout(() => {
+      reject('Timeout: fetchTasks response not received');
+    }, 5000);
+    socket.once('fetchTasks', (data) => {
+      clearTimeout(timeout);
+      if (data.success) {
+        resolve(data.tasks);
+      } else {
+        reject(data.message);
+      }
+    });
+  });
 });
 
 // ➕ Async thunk for adding a task
-export const addTask = createAsyncThunk('tasks/addTask', async (taskData) => {
-  const response = await axios.post('http://localhost:5000/api/task/add', taskData);
-  if (!response.data.success) {
-    throw new Error(response.data.message);
-  }
-  return response.data.task;
+export const addTask = createAsyncThunk('tasks/addTask', async (taskData, thunkAPI) => {
+  return new Promise((resolve, reject) => {
+    socket.emit('task/addTask', taskData);
+    const timeout = setTimeout(() => {
+      reject('Timeout: addTask response not received');
+    }, 5000);
+    socket.once('addTask', (data) => {
+      clearTimeout(timeout);
+      if (data.success) {
+        resolve(data.task);
+      } else {
+        reject(data.message);
+      }
+    });
+  });
 });
 
 // 🔁 Async thunk for updating a task
-export const updateTask = createAsyncThunk('tasks/updateTask', async ({ _id, status, userName }) => {
-  const response = await axios.put(`http://localhost:5000/api/task/update/${_id}`, { status, userName });
-  return response.data.task;
+export const updateTask = createAsyncThunk('tasks/updateTask', async ({ _id, status, userName }, thunkAPI) => {
+  return new Promise((resolve, reject) => {
+    socket.emit('task/updateTask', { _id, status, userName });
+    const timeout = setTimeout(() => {
+      reject('Timeout: updateTask response not received');
+    }, 5000);
+    socket.once('updateTask', (data) => {
+      clearTimeout(timeout);
+      if (data.success) {
+        resolve(data.task);
+      } else {
+        reject(data.message);
+      }
+    });
+  });
 });
 
 export const deleteTask = createAsyncThunk('tasks/deleteTask', async (_id, thunkAPI) => {
@@ -30,7 +63,12 @@ export const deleteTask = createAsyncThunk('tasks/deleteTask', async (_id, thunk
     const response = await new Promise((resolve, reject) => {
       socket.emit('task/deleteTask', { _id });
 
-      socket.on('deleteTask', (data) => {
+      const timeout = setTimeout(() => {
+        reject('Timeout: deleteTask response not received');
+      }, 5000);
+
+      socket.once('deleteTask', (data) => {
+        clearTimeout(timeout);
         if (data.success) {
           resolve(data);
         } else {

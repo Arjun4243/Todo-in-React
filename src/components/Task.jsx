@@ -1,11 +1,16 @@
 import { Draggable } from '@hello-pangea/dnd';
 import {useDispatch} from "react-redux"
 import { deleteTask } from './slice/taskSlice.js';
+import {useCallback} from "react"
 
 
 function Task({ task, index }) {
 
   const dispatch = useDispatch();
+
+  const handleDelete = useCallback(() => {
+    dispatch(deleteTask(task._id));
+  }, [dispatch, task._id]);
 
   return (
 
@@ -25,7 +30,7 @@ function Task({ task, index }) {
                 <p className="card-text">{task.task}</p>
                 <small className="text-muted">By: {task.userName}</small>
               </div>
-              <img src="/deleteButton.gif" alt="delete button" onClick={() => dispatch(deleteTask(task._id))} style={{ cursor: 'pointer' }} />
+              <img src="/deleteButton.gif" alt="delete button" onClick={handleDelete} style={{ cursor: 'pointer' }} />
             </div>
           </div>
           {provided.placeholder}
