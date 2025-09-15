@@ -1,5 +1,6 @@
 import React, { useState, useContext ,useEffect} from 'react';
-import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { addTask as addTaskAction } from './slice/taskSlice';
 import Task from './Task.jsx';
 import { BoardContext } from '../context/BoardContext';
 import {Droppable,} from '@hello-pangea/dnd';
@@ -10,6 +11,7 @@ const Column = ({ title, status, tasks }) => {
   const { fetchTasks } = useContext(BoardContext);
   const [userId,setUserId]=useState()
   const [userName,setUserName]=useState()
+  const [loading, setLoading] = useState(false);
 
 useEffect(() => {
   const userId = localStorage.getItem('userToken');
@@ -21,20 +23,25 @@ useEffect(() => {
 }, []);
 
 
-  const addTask = async () => {
-    if (!taskText.trim()) return;
+  const dispatch = useDispatch();
 
+  const addTask = async () => {
+    if (!taskText.trim() || loading) return;
+
+    setLoading(true);
     try {
-      await axios.post('http://localhost:5000/api/task/add', {
+      await dispatch(addTaskAction({
         task: taskText,
         status,
         userId,
         userName
-      });
+      })).unwrap();
       setTaskText('');
       fetchTasks();
     } catch (err) {
       console.error('Error adding task:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -86,8 +93,8 @@ useEffect(() => {
             value={taskText}
             onChange={(e) => setTaskText(e.target.value)}
           />
-          <button className="btn btn-sm btn-success mb-3" onClick={addTask}>
-            Add Task
+          <button className="btn btn-sm btn-success mb-3" onClick={addTask} disabled={loading}>
+            {loading ? 'Adding...' : 'Add Task'}
           </button>
         </div>
       </div>

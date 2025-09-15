@@ -9,7 +9,7 @@ import { toast,Slide ,hideProgressBar} from 'react-toastify';
 
 function Board() {
 
-    const { tasks, setTasks,socket } = useContext(BoardContext);
+    const { tasks, updateTasks: setTasks,socket } = useContext(BoardContext);
 
   const grouped = {
     toDo: tasks.filter(t => t.status === 'toDo'),
@@ -36,8 +36,8 @@ function Board() {
   // Remove from original position
   updatedTasks.splice(draggedTaskIndex, 1);
 
-  // Update status
-  draggedTask.status = destination.droppableId;
+  // Update status (create new object to avoid mutating read-only property)
+  const updatedDraggedTask = { ...draggedTask, status: destination.droppableId };
 
   // Find all tasks in the destination column
   const destinationTasks = updatedTasks.filter(task => task.status === destination.droppableId);
@@ -45,7 +45,7 @@ function Board() {
   // Insert at the correct index
   const before = updatedTasks.filter(task => task.status !== destination.droppableId);
 
-  destinationTasks.splice(destination.index, 0, draggedTask);
+  destinationTasks.splice(destination.index, 0, updatedDraggedTask);
 
   
 
@@ -58,8 +58,8 @@ function Board() {
 
   
 socket.emit("updateTask", {
-  _id: draggedTask._id,
-  status: draggedTask.status,
+  _id: updatedDraggedTask._id,
+  status: updatedDraggedTask.status,
   userName: userNameUpdate
 });
 

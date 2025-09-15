@@ -1,21 +1,14 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { io } from "socket.io-client";
-import axios from 'axios';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchTasks, updateTaskStatus, setTasks } from '../components/slice/taskSlice';
 
 export const BoardContext = createContext();
 
 export const BoardProvider = ({ children }) => {
-  const [tasks, setTasks] = useState([]);
+  const tasks = useSelector((state) => state.tasks.tasks);
+  const dispatch = useDispatch();
   const [socket, setSocket] = useState(null);
-
-  const fetchTasks = async () => {
-    try {
-      const res = await axios.get(`http://localhost:5000/api/task/get`);
-      setTasks(res.data.tasks);
-    } catch (err) {
-      console.error('Error fetching tasks:', err);
-    }
-  };
 
   useEffect(() => {
     const newSocket = io("http://localhost:5000");
@@ -27,11 +20,15 @@ export const BoardProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    fetchTasks();
-  }, []);
+    dispatch(fetchTasks());
+  }, [dispatch]);
+
+  const updateTasks = (newTasks) => {
+    dispatch(setTasks(newTasks));
+  };
 
   return (
-    <BoardContext.Provider value={{ tasks, fetchTasks, setTasks, socket }}>
+    <BoardContext.Provider value={{ tasks, fetchTasks: () => dispatch(fetchTasks()), updateTasks, socket, dispatch }}>
       {children}
     </BoardContext.Provider>
   );

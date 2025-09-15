@@ -14,7 +14,16 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
-app.use(cors());
+
+
+const corsOptions = {
+  origin: ['http://localhost:3000', 'http://172.16.2.33:3000'], // Add your local IP and localhost
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+
 
 // Register REST routes
 app.use("/api/user", userRouter);
