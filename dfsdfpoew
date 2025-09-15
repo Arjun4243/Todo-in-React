@@ -1,0 +1,17 @@
+[33m6d6108e[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m useCall and useMemo are used
+[33m34c5e39[m project is to be completed
+[33m4d3cd44[m userd to Task slicing
+[33mf1bd7b9[m  i have add the redux module
+[33m09128aa[m now Store.js file added
+[33m56ca7ac[m i add the background color
+[33ma6deae5[m i add the toastifyed
+[33ma3a6c96[m  socket.io are update the data in the backend
+[33m6f384f6[m backend socket.io setyp is ready
+[33m731c42d[m work done drag and drop only in frontend with index value
+[33m56346a4[m working the drag and drop funtionality in the frontend
+[33m20a2c43[m add task and getting are completed from backend and frontend
+[33m92f7261[m value add as static in GUI
+[33mc466ea2[m sign-up now are working and login it is connect to the backend
+[33m126ee90[m Registratin and Login GUI solve
+[33m4660ae8[m  backedn solve Login and Resgistration
+[33m808abfd[m Initial commit from Create Next App

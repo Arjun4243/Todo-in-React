@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { socket } from './taskSlice';
 
-// Async thunk for fetching boards
+
 export const fetchBoards = createAsyncThunk('boards/fetchBoards', async (_, thunkAPI) => {
   return new Promise((resolve, reject) => {
     socket.emit('board/fetchBoards');
@@ -15,7 +15,7 @@ export const fetchBoards = createAsyncThunk('boards/fetchBoards', async (_, thun
   });
 });
 
-// Async thunk for adding a board
+
 export const addBoard = createAsyncThunk('boards/addBoard', async (boardData, thunkAPI) => {
   return new Promise((resolve, reject) => {
     socket.emit('board/addBoard', boardData);
@@ -29,7 +29,7 @@ export const addBoard = createAsyncThunk('boards/addBoard', async (boardData, th
   });
 });
 
-// Async thunk for updating a board
+
 export const updateBoard = createAsyncThunk('boards/updateBoard', async ({ _id, ...updates }, thunkAPI) => {
   return new Promise((resolve, reject) => {
     socket.emit('board/updateBoard', { _id, ...updates });
@@ -43,7 +43,7 @@ export const updateBoard = createAsyncThunk('boards/updateBoard', async ({ _id, 
   });
 });
 
-// Async thunk for deleting a board
+
 export const deleteBoard = createAsyncThunk('boards/deleteBoard', async (_id, thunkAPI) => {
   return new Promise((resolve, reject) => {
     socket.emit('board/deleteBoard', { _id });

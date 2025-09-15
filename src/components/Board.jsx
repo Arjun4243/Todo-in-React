@@ -2,7 +2,7 @@ import { useContext,useCallback,useEffect } from 'react';
 import { BoardContext } from '../context/BoardContext';
 import Column from './Column';
 import {  DragDropContext,} from '@hello-pangea/dnd';
-import { toast,Slide ,hideProgressBar} from 'react-toastify';
+import { toast,Slide } from 'react-toastify';
 
 
 

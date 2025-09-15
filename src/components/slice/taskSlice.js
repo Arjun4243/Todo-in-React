@@ -1,10 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+
 import { io } from 'socket.io-client';
 
 export const socket = io('http://localhost:5000');
 
-// 🔄 Async thunk for fetching tasks
+
 export const fetchTasks = createAsyncThunk('tasks/fetchTasks', async (_, thunkAPI) => {
   return new Promise((resolve, reject) => {
     socket.emit('task/fetchTasks');
@@ -22,7 +22,7 @@ export const fetchTasks = createAsyncThunk('tasks/fetchTasks', async (_, thunkAP
   });
 });
 
-// ➕ Async thunk for adding a task
+
 export const addTask = createAsyncThunk('tasks/addTask', async (taskData, thunkAPI) => {
   return new Promise((resolve, reject) => {
     socket.emit('task/addTask', taskData);
@@ -40,7 +40,7 @@ export const addTask = createAsyncThunk('tasks/addTask', async (taskData, thunkA
   });
 });
 
-// 🔁 Async thunk for updating a task
+
 export const updateTask = createAsyncThunk('tasks/updateTask', async ({ _id, status, userName }, thunkAPI) => {
   return new Promise((resolve, reject) => {
     socket.emit('task/updateTask', { _id, status, userName });
@@ -77,7 +77,7 @@ export const deleteTask = createAsyncThunk('tasks/deleteTask', async (_id, thunk
       });
     });
 
-    // ✅ Manually dispatch reducer to update state
+
     thunkAPI.dispatch(removeTaskLocally(_id));
     return _id;
   } catch (error) {

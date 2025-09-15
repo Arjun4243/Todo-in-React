@@ -17,7 +17,7 @@ app.use(express.json());
 
 
 const corsOptions = {
-  origin: ['http://localhost:3000', 'http://172.16.2.33:3000'], // Add your local IP and localhost
+  origin: ['http://localhost:3000', 'http://172.16.2.33:3000'],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
 };
@@ -46,10 +46,10 @@ const startServer = async () => {
   try {
     await connectDB();
     server.listen(PORT, () => {
-      console.log(`🚀 Server and Socket.IO running on port ${PORT}`);
+      console.log(` Server and Socket.IO running on port ${PORT}`);
     });
   } catch (error) {
-    console.error("❌ Failed to start server:", error);
+    console.error(" Failed to start server:", error);
   }
 };
 

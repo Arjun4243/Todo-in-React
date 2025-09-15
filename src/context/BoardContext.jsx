@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { io } from "socket.io-client";
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchTasks, updateTaskStatus, setTasks } from '../components/slice/taskSlice';
+import { fetchTasks, setTasks } from '../components/slice/taskSlice';
 
 export const BoardContext = createContext();
 
@@ -31,7 +31,7 @@ export const BoardProvider = ({ children }) => {
     dispatch(setTasks(newTasks));
   }, [dispatch]);
 
-  const value = useMemo(() => ({
+  const contextValue = useMemo(() => ({
     tasks,
     fetchTasks: handleFetchTasks,
     updateTasks,
@@ -40,7 +40,7 @@ export const BoardProvider = ({ children }) => {
   }), [tasks, handleFetchTasks, updateTasks, socket, dispatch]);
 
   return (
-    <BoardContext.Provider value={value}>
+    <BoardContext.Provider value={contextValue}>
       {children}
     </BoardContext.Provider>
   );

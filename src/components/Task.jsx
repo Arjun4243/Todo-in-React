@@ -1,11 +1,9 @@
+import React, { useCallback } from 'react';
 import { Draggable } from '@hello-pangea/dnd';
-import {useDispatch} from "react-redux"
+import { useDispatch } from "react-redux";
 import { deleteTask } from './slice/taskSlice.js';
-import {useCallback} from "react"
-
 
 function Task({ task, index }) {
-
   const dispatch = useDispatch();
 
   const handleDelete = useCallback(() => {
@@ -13,7 +11,6 @@ function Task({ task, index }) {
   }, [dispatch, task._id]);
 
   return (
-
     <Draggable draggableId={task._id} index={index}>
       {(provided) => (
         <div
@@ -21,11 +18,9 @@ function Task({ task, index }) {
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-
         >
           <div className="card-body" style={{ background: "#f9e9d2" }}>
-           <div className='d-flex justify-content-between'>
-
+            <div className='d-flex justify-content-between'>
               <div>
                 <p className="card-text">{task.task}</p>
                 <small className="text-muted">By: {task.userName}</small>
@@ -37,7 +32,6 @@ function Task({ task, index }) {
         </div>
       )}
     </Draggable>
-
   );
 }
 

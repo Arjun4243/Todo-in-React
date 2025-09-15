@@ -4,7 +4,7 @@ const uiSlice = createSlice({
   name: 'ui',
   initialState: {
     filters: {
-      status: 'all', // 'all', 'toDo', 'inProgress', 'done'
+      status: 'all', 
       assignee: 'all',
     },
     searchTerm: '',
