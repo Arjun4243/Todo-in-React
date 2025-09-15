@@ -1,13 +1,16 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { io } from 'socket.io-client';
 
-// Async thunk for fetching tasks
+export const socket = io('http://localhost:5000');
+
+// 🔄 Async thunk for fetching tasks
 export const fetchTasks = createAsyncThunk('tasks/fetchTasks', async () => {
   const response = await axios.get('http://localhost:5000/api/task/get');
   return response.data.tasks;
 });
 
-// Async thunk for adding a task
+// ➕ Async thunk for adding a task
 export const addTask = createAsyncThunk('tasks/addTask', async (taskData) => {
   const response = await axios.post('http://localhost:5000/api/task/add', taskData);
   if (!response.data.success) {
@@ -16,10 +19,32 @@ export const addTask = createAsyncThunk('tasks/addTask', async (taskData) => {
   return response.data.task;
 });
 
-// Async thunk for updating a task (for drag and drop)
+// 🔁 Async thunk for updating a task
 export const updateTask = createAsyncThunk('tasks/updateTask', async ({ _id, status, userName }) => {
   const response = await axios.put(`http://localhost:5000/api/task/update/${_id}`, { status, userName });
   return response.data.task;
+});
+
+export const deleteTask = createAsyncThunk('tasks/deleteTask', async (_id, thunkAPI) => {
+  try {
+    const response = await new Promise((resolve, reject) => {
+      socket.emit('task/deleteTask', { _id });
+
+      socket.on('deleteTask', (data) => {
+        if (data.success) {
+          resolve(data);
+        } else {
+          reject(data.message || 'Deletion failed');
+        }
+      });
+    });
+
+    // ✅ Manually dispatch reducer to update state
+    thunkAPI.dispatch(removeTaskLocally(_id));
+    return _id;
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error);
+  }
 });
 
 const taskSlice = createSlice({
@@ -40,6 +65,9 @@ const taskSlice = createSlice({
     setTasks: (state, action) => {
       state.tasks = action.payload;
     },
+    removeTaskLocally: (state, action) => {
+      state.tasks = state.tasks.filter(task => task._id !== action.payload);
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -63,8 +91,8 @@ const taskSlice = createSlice({
           state.tasks[index] = action.payload;
         }
       });
-  },
+  }
 });
 
-export const { updateTaskStatus, setTasks } = taskSlice.actions;
+export const { updateTaskStatus, setTasks, removeTaskLocally } = taskSlice.actions;
 export default taskSlice.reducer;

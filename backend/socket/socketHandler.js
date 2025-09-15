@@ -34,5 +34,16 @@ export default function socketHandler(io) {
         });
       }
     });
+
+    socket.on("task/deleteTask",async(data)=>{
+      try{
+        await taskModel.findByIdAndDelete(data._id)
+        socket.emit("deleteTask",{success:true,message:"Deleted"})
+      }
+      catch(error){
+        console.error("Delete error:", error);
+        socket.emit("deleteTask",{success:false,message:"Not Deleted"})
+      }
+    })
   });
 }
