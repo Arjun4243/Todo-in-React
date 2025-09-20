@@ -1,10 +1,9 @@
 import userModel from "../model/User.js";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+
 
 const registerUser=async(req,res)=>{
     const {name,email,password}=req.body;
-
+    
     try{
 
         const existingUser=await userModel.findOne({email})
@@ -16,21 +15,26 @@ const registerUser=async(req,res)=>{
             })
         }
 
-        // Hash password
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-
         const newUser=new userModel({
             name,
             email,
-            password: hashedPassword
+            password
         })
         await newUser.save();
 
-        // Generate JWT token
-        const token = jwt.sign(
-            { userId: newUser._id, email: newUser.email },
-            process.env.JWT_SECRET || 'your-secret-key',
+        res.json({
+            success:true,
+            message:"user registered successfully",
+        })
+    }
+    catch(error){
+        console.error("Error registering user:", error);
+        res.status(500).json({
+            success:false,
+            message:"Internal server error"
+        })        
+    }
+}
 
 
 
