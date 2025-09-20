@@ -17,8 +17,8 @@ app.use(express.json());
 
 
 const corsOptions = {
-  origin: ["https://todo-in-react-frontend.onrender.com/"],
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  origin: ["https://todo-in-react-frontend.onrender.com"],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true,
 };
 

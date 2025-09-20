@@ -15,7 +15,7 @@ function Register({setLoginShow}) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const endpoint = isRegister ? 'http://localhost:5000/api/user/register' : 'http://localhost:5000/api/user/login';
+    const endpoint = isRegister ? 'https://todo-in-react-hizb.onrender.com/api/user/register' : 'https://todo-in-react-hizb.onrender.com/api/user/login';
 
   try {
     const res = await axios.post(endpoint, formData);

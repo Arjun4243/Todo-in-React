@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 import { io } from 'socket.io-client';
 
-export const socket = io('http://localhost:5000');
+export const socket = io('https://todo-in-react-hizb.onrender.com');
 
 
 export const fetchTasks = createAsyncThunk('tasks/fetchTasks', async (_, thunkAPI) => {
