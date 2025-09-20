@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 dotenv.config();
 
-const urlDatabase="mongodb+srv://arjunsinghanya35_db_user:LsVwhHdJXW6cmqmj@pen.lpueoko.mongodb.net/blackboard;"
+const urlDatabase="mongodb+srv://arjunsinghanya35_db_user:Nt3fUpgmoAKF09mr@pen.lpueoko.mongodb.net/?retryWrites=true&w=majority&appName=pen"
 
 const connectDB=async()=>{
     try{
