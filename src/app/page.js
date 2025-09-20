@@ -17,8 +17,10 @@ export default function Home() {
     <div style={{backgroundColor:"#d9d9d9",height:"100vh"}}>
       <BoardProvider>
         <ToastContainer position="bottom-left" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick={false} rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="light" transition={Slide} />
-        <Nav setShowLogin={setLoginShow} />
-        {loginShow ? <Register /> : <Board  board={board} setBoard={setBoard} />}
+
+
+        <Nav setLoginShow={setLoginShow} loginShow={loginShow} />
+        {loginShow ? <Register setLoginShow={setLoginShow} /> : <Board  board={board} setBoard={setBoard} />}
       </BoardProvider>
     </div>
   );

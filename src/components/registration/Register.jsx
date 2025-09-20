@@ -3,7 +3,7 @@ import './Register.css';
 import axios from 'axios';
 // import { useNavigate } from 'react-router-dom';
 
-function Register() {
+function Register({setLoginShow}) {
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
   const [isRegister, setIsRegister] = useState(true);
   // const navigate = useNavigate();
@@ -29,6 +29,12 @@ function Register() {
       }
       // navigate('/dashboard');
       alert( isRegister ? 'Registration successful!' : 'Login successful!');
+
+      if(!isRegister){
+        setLoginShow(false)
+
+      }
+      
     } else {
       alert(data.message || 'Something went wrong');
     }

@@ -17,7 +17,7 @@ app.use(express.json());
 
 
 const corsOptions = {
-  origin: ['http://localhost:3000', 'http://172.16.2.33:3000',"https://todo-in-react-frontend.onrender.com/"],
+  origin: ["https://todo-in-react-frontend.onrender.com/"],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
 };
