@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import './Register.css';
-import axios from 'axios';
 // import { useNavigate } from 'react-router-dom';
 
 function Register({setLoginShow}) {
@@ -18,9 +17,16 @@ function Register({setLoginShow}) {
     const endpoint = isRegister ? 'https://todo-in-react-hizb.onrender.com/api/user/register' : 'https://todo-in-react-hizb.onrender.com/api/user/login';
 
   try {
-    const res = await axios.post(endpoint, formData);
-    const data = res.data;
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData)
+    });
+    const data = await res.json();
     
+    if (!res.ok) {
+      throw new Error(data.message || 'Server error');
+    }
 
     if (data.success) {
       if (data.token) {
@@ -39,8 +45,8 @@ function Register({setLoginShow}) {
       alert(data.message || 'Something went wrong');
     }
   } catch (err) {
-    console.error('Axios error:', err);
-    alert('Server error');
+    console.error('Fetch error:', err);
+    alert(err.message || 'Server error');
   }
 };
 

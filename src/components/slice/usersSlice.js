@@ -1,29 +1,39 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
 
 
 
 
 export const fetchUsers = createAsyncThunk('users/fetchUsers', async () => {
-  const response = await axios.get('http://localhost:5000/api/user/get');
-  return response.data.users;
+  const response = await fetch('http://localhost:5000/api/user/get');
+  const data = await response.json();
+  return data.users;
 });
 
 
 export const addUser = createAsyncThunk('users/addUser', async (userData) => {
-  const response = await axios.post('http://localhost:5000/api/user/add', userData);
-  return response.data.user;
+  const response = await fetch('http://localhost:5000/api/user/add', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(userData)
+  });
+  const data = await response.json();
+  return data.user;
 });
 
 
 export const updateUser = createAsyncThunk('users/updateUser', async ({ _id, ...updates }) => {
-  const response = await axios.put(`http://localhost:5000/api/user/update/${_id}`, updates);
-  return response.data.user;
+  const response = await fetch(`http://localhost:5000/api/user/update/${_id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(updates)
+  });
+  const data = await response.json();
+  return data.user;
 });
 
 
 export const deleteUser = createAsyncThunk('users/deleteUser', async (_id) => {
-  await axios.delete(`http://localhost:5000/api/user/delete/${_id}`);
+  await fetch(`http://localhost:5000/api/user/delete/${_id}`, { method: 'DELETE' });
   return _id;
 });
 
