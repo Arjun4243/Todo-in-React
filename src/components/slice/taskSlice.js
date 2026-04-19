@@ -2,60 +2,76 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 import { io } from 'socket.io-client';
 
-export const socket = io('https://todo-in-react-hizb.onrender.com');
+// Point to your local backend to match usersSlice
+export const socket = io('http://localhost:5000');
 
 
 export const fetchTasks = createAsyncThunk('tasks/fetchTasks', async (_, thunkAPI) => {
-  return new Promise((resolve, reject) => {
-    socket.emit('task/fetchTasks');
-    const timeout = setTimeout(() => {
-      reject('Timeout: fetchTasks response not received');
-    }, 5000);
-    socket.once('fetchTasks', (data) => {
-      clearTimeout(timeout);
-      if (data.success) {
-        resolve(data.tasks);
-      } else {
-        reject(data.message);
-      }
+  try {
+    return await new Promise((resolve, reject) => {
+      socket.emit('task/fetchTasks');
+      const timeout = setTimeout(() => {
+        socket.off('fetchTasks');
+        reject('Timeout: fetchTasks response not received');
+      }, 5000);
+      socket.once('fetchTasks', (data) => {
+        clearTimeout(timeout);
+        if (data.success) {
+          resolve(data.tasks);
+        } else {
+          reject(data.message || 'Failed to fetch tasks');
+        }
+      });
     });
-  });
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error);
+  }
 });
 
 
 export const addTask = createAsyncThunk('tasks/addTask', async (taskData, thunkAPI) => {
-  return new Promise((resolve, reject) => {
-    socket.emit('task/addTask', taskData);
-    const timeout = setTimeout(() => {
-      reject('Timeout: addTask response not received');
-    }, 5000);
-    socket.once('addTask', (data) => {
-      clearTimeout(timeout);
-      if (data.success) {
-        resolve(data.task);
-      } else {
-        reject(data.message);
-      }
+  try {
+    return await new Promise((resolve, reject) => {
+      socket.emit('task/addTask', taskData);
+      const timeout = setTimeout(() => {
+        socket.off('addTask');
+        reject('Timeout: addTask response not received');
+      }, 5000);
+      socket.once('addTask', (data) => {
+        clearTimeout(timeout);
+        if (data.success) {
+          resolve(data.task);
+        } else {
+          reject(data.message || 'Failed to add task');
+        }
+      });
     });
-  });
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error);
+  }
 });
 
 
 export const updateTask = createAsyncThunk('tasks/updateTask', async ({ _id, status, userName }, thunkAPI) => {
-  return new Promise((resolve, reject) => {
-    socket.emit('task/updateTask', { _id, status, userName });
-    const timeout = setTimeout(() => {
-      reject('Timeout: updateTask response not received');
-    }, 5000);
-    socket.once('updateTask', (data) => {
-      clearTimeout(timeout);
-      if (data.success) {
-        resolve(data.task);
-      } else {
-        reject(data.message);
-      }
+  try {
+    return await new Promise((resolve, reject) => {
+      socket.emit('task/updateTask', { _id, status, userName });
+      const timeout = setTimeout(() => {
+        socket.off('updateTask');
+        reject('Timeout: updateTask response not received');
+      }, 5000);
+      socket.once('updateTask', (data) => {
+        clearTimeout(timeout);
+        if (data.success) {
+          resolve(data.task);
+        } else {
+          reject(data.message || 'Failed to update task');
+        }
+      });
     });
-  });
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error);
+  }
 });
 
 export const deleteTask = createAsyncThunk('tasks/deleteTask', async (_id, thunkAPI) => {
@@ -122,6 +138,10 @@ const taskSlice = createSlice({
       })
       .addCase(addTask.fulfilled, (state, action) => {
         state.tasks.push(action.payload);
+      })
+      .addCase(addTask.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || action.error.message;
       })
       .addCase(updateTask.fulfilled, (state, action) => {
         const index = state.tasks.findIndex(task => task._id === action.payload._id);

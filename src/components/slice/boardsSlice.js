@@ -3,30 +3,48 @@ import { socket } from './taskSlice';
 
 
 export const fetchBoards = createAsyncThunk('boards/fetchBoards', async (_, thunkAPI) => {
-  return new Promise((resolve, reject) => {
-    socket.emit('board/fetchBoards');
-    socket.on('fetchBoards', (data) => {
-      if (data.success) {
-        resolve(data.boards);
-      } else {
-        reject(data.message);
-      }
+  try {
+    return await new Promise((resolve, reject) => {
+      socket.emit('board/fetchBoards');
+      const timeout = setTimeout(() => {
+        socket.off('fetchBoards');
+        reject('Timeout: fetchBoards response not received');
+      }, 5000);
+      socket.once('fetchBoards', (data) => {
+        clearTimeout(timeout);
+        if (data.success) {
+          resolve(data.boards);
+        } else {
+          reject(data.message || 'Failed to fetch boards');
+        }
+      });
     });
-  });
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error);
+  }
 });
 
 
 export const addBoard = createAsyncThunk('boards/addBoard', async (boardData, thunkAPI) => {
-  return new Promise((resolve, reject) => {
-    socket.emit('board/addBoard', boardData);
-    socket.on('addBoard', (data) => {
-      if (data.success) {
-        resolve(data.board);
-      } else {
-        reject(data.message);
-      }
+  try {
+    return await new Promise((resolve, reject) => {
+      socket.emit('board/addBoard', boardData);
+      const timeout = setTimeout(() => {
+        socket.off('addBoard');
+        reject('Timeout: addBoard response not received');
+      }, 5000);
+      socket.once('addBoard', (data) => {
+        clearTimeout(timeout);
+        if (data.success) {
+          resolve(data.board);
+        } else {
+          reject(data.message || 'Failed to add board');
+        }
+      });
     });
-  });
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error);
+  }
 });
 
 
