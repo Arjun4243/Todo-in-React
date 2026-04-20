@@ -49,30 +49,48 @@ export const addBoard = createAsyncThunk('boards/addBoard', async (boardData, th
 
 
 export const updateBoard = createAsyncThunk('boards/updateBoard', async ({ _id, ...updates }, thunkAPI) => {
-  return new Promise((resolve, reject) => {
-    socket.emit('board/updateBoard', { _id, ...updates });
-    socket.on('updateBoard', (data) => {
-      if (data.success) {
-        resolve(data.board);
-      } else {
-        reject(data.message);
-      }
+  try {
+    return await new Promise((resolve, reject) => {
+      socket.emit('board/updateBoard', { _id, ...updates });
+      const timeout = setTimeout(() => {
+        socket.off('updateBoard');
+        reject('Timeout: updateBoard response not received');
+      }, 5000);
+      socket.once('updateBoard', (data) => {
+        clearTimeout(timeout);
+        if (data.success) {
+          resolve(data.board);
+        } else {
+          reject(data.message || 'Failed to update board');
+        }
+      });
     });
-  });
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error);
+  }
 });
 
 
 export const deleteBoard = createAsyncThunk('boards/deleteBoard', async (_id, thunkAPI) => {
-  return new Promise((resolve, reject) => {
-    socket.emit('board/deleteBoard', { _id });
-    socket.on('deleteBoard', (data) => {
-      if (data.success) {
-        resolve(_id);
-      } else {
-        reject(data.message);
-      }
+  try {
+    return await new Promise((resolve, reject) => {
+      socket.emit('board/deleteBoard', { _id });
+      const timeout = setTimeout(() => {
+        socket.off('deleteBoard');
+        reject('Timeout: deleteBoard response not received');
+      }, 5000);
+      socket.once('deleteBoard', (data) => {
+        clearTimeout(timeout);
+        if (data.success) {
+          resolve(_id);
+        } else {
+          reject(data.message || 'Failed to delete board');
+        }
+      });
     });
-  });
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error);
+  }
 });
 
 const boardsSlice = createSlice({
@@ -98,7 +116,7 @@ const boardsSlice = createSlice({
       })
       .addCase(fetchBoards.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message;
+        state.error = action.payload || action.error.message;
       })
       .addCase(addBoard.fulfilled, (state, action) => {
         state.boards.push(action.payload);

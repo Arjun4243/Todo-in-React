@@ -13,16 +13,15 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(express.json());
-
-
 const corsOptions = {
-  origin: ["https://todo-in-react-frontend.onrender.com"],
+  origin: ["https://todo-in-react-frontend.onrender.com", "http://localhost:3000", "http://127.0.0.1:3000"],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true,
+  optionsSuccessStatus: 200
 };
 
-app.use(cors(corsOptions));
+app.use(cors(corsOptions)); // CORS must be above routes and other middleware
+app.use(express.json());
 
 
 // Register REST routes
@@ -32,10 +31,7 @@ app.use("/api/task", taskRouter);
 // Create HTTP server and attach Socket.IO with CORS config
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: {
-    origin: "*", // Allow all origins (or specify your frontend URL)
-    
-  }
+  cors: corsOptions
 });
 
 // Handle Socket.IO connections

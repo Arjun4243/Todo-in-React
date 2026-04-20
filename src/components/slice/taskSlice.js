@@ -3,7 +3,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { io } from 'socket.io-client';
 
 // Point to your local backend to match usersSlice
-export const socket = io('http://localhost:5000');
+export const socket = io('https://todo-in-react-hizb.onrender.com');
 
 
 export const fetchTasks = createAsyncThunk('tasks/fetchTasks', async (_, thunkAPI) => {
@@ -19,7 +19,7 @@ export const fetchTasks = createAsyncThunk('tasks/fetchTasks', async (_, thunkAP
         if (data.success) {
           resolve(data.tasks);
         } else {
-          reject(data.message || 'Failed to fetch tasks');
+          reject(data.message || `Server Error: ${JSON.stringify(data)}`);
         }
       });
     });
@@ -42,7 +42,7 @@ export const addTask = createAsyncThunk('tasks/addTask', async (taskData, thunkA
         if (data.success) {
           resolve(data.task);
         } else {
-          reject(data.message || 'Failed to add task');
+          reject(data.message || `Server Error: ${JSON.stringify(data)}`);
         }
       });
     });
@@ -65,7 +65,7 @@ export const updateTask = createAsyncThunk('tasks/updateTask', async ({ _id, sta
         if (data.success) {
           resolve(data.task);
         } else {
-          reject(data.message || 'Failed to update task');
+          reject(data.message || `Server Error: ${JSON.stringify(data)}`);
         }
       });
     });
@@ -80,15 +80,16 @@ export const deleteTask = createAsyncThunk('tasks/deleteTask', async (_id, thunk
       socket.emit('task/deleteTask', { _id });
 
       const timeout = setTimeout(() => {
+        socket.off('deleteTask');
         reject('Timeout: deleteTask response not received');
       }, 5000);
 
       socket.once('deleteTask', (data) => {
         clearTimeout(timeout);
         if (data.success) {
-          resolve(data);
+          resolve(_id);
         } else {
-          reject(data.message || 'Deletion failed');
+          reject(data.message || `Server Error: ${JSON.stringify(data)}`);
         }
       });
     });
@@ -134,7 +135,7 @@ const taskSlice = createSlice({
       })
       .addCase(fetchTasks.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message;
+        state.error = action.payload || action.error.message;
       })
       .addCase(addTask.fulfilled, (state, action) => {
         state.tasks.push(action.payload);
@@ -148,6 +149,9 @@ const taskSlice = createSlice({
         if (index !== -1) {
           state.tasks[index] = action.payload;
         }
+      })
+      .addCase(deleteTask.fulfilled, (state, action) => {
+        state.tasks = state.tasks.filter(task => task._id !== action.payload);
       });
   }
 });

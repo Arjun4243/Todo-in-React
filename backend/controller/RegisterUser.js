@@ -25,6 +25,8 @@ const registerUser=async(req,res)=>{
         res.json({
             success:true,
             message:"user registered successfully",
+            token:newUser._id,
+            user:{name:newUser.name}
         })
     }
     catch(error){
