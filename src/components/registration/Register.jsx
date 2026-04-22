@@ -14,13 +14,27 @@ function Register({setLoginShow}) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const endpoint = isRegister ? 'https://todo-in-react-hizb.onrender.com/api/user/register' : 'https://todo-in-react-hizb.onrender.com/api/user/login';
+    const islocalhost=window.location.hostname === 'localhost'||"";
+
+    let endpoint;
+
+    if(islocalhost){
+      endpoint = isRegister ? 'http://localhost:5000/api/user/register' : 'http://localhost:5000/api/user/login';
+    }
+    else{
+     endpoint = isRegister ? 'https://todo-in-react-hizb.onrender.com/api/user/register' : 'https://todo-in-react-hizb.onrender.com/api/user/login';
+    }
+
+  
 
   try {
     const res = await fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData)
+      method: 'POST',   
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    
     });
     const data = await res.json();
     
@@ -34,7 +48,7 @@ function Register({setLoginShow}) {
         localStorage.setItem("userName",data.user.name)
       }
       // navigate('/dashboard');
-      alert( isRegister ? 'Registration successful!' : 'Login successful!');
+      alert( isRegister ? 'Registration successful!' : 'Login successful!');  
 
       if(!isRegister){
         setLoginShow(false)
