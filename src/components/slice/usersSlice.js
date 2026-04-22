@@ -4,14 +4,17 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 
 export const fetchUsers = createAsyncThunk('users/fetchUsers', async () => {
-  const response = await fetch('http://localhost:5000/api/user/get');
+  const response = await fetch('https://todo-in-react-hizb.onrender.com/api/user/get',{
+    method:"GET",
+    headers:{"content-type":"application/json"}
+  });
   const data = await response.json();
   return data.users;
 });
 
 
 export const addUser = createAsyncThunk('users/addUser', async (userData) => {
-  const response = await fetch('http://localhost:5000/api/user/add', {
+  const response = await fetch('https://todo-in-react-hizb.onrender.com/api/user/add', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(userData)
@@ -22,7 +25,7 @@ export const addUser = createAsyncThunk('users/addUser', async (userData) => {
 
 
 export const updateUser = createAsyncThunk('users/updateUser', async ({ _id, ...updates }) => {
-  const response = await fetch(`http://localhost:5000/api/user/update/${_id}`, {
+  const response = await fetch(`https://todo-in-react-hizb.onrender.com/api/user/update/${_id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(updates)
@@ -33,7 +36,7 @@ export const updateUser = createAsyncThunk('users/updateUser', async ({ _id, ...
 
 
 export const deleteUser = createAsyncThunk('users/deleteUser', async (_id) => {
-  await fetch(`http://localhost:5000/api/user/delete/${_id}`, { method: 'DELETE' });
+  await fetch(`https://todo-in-react-hizb.onrender.com/api/user/delete/${_id}`, { method: 'DELETE' });
   return _id;
 });
 

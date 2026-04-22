@@ -5,29 +5,31 @@ import { io } from 'socket.io-client';
 // Point to your local backend to match usersSlice
 export const socket = io('https://todo-in-react-hizb.onrender.com');
 
-
 export const fetchTasks = createAsyncThunk('tasks/fetchTasks', async (_, thunkAPI) => {
   try {
-    return await new Promise((resolve, reject) => {
-      socket.emit('task/fetchTasks');
-      const timeout = setTimeout(() => {
-        socket.off('fetchTasks');
-        reject('Timeout: fetchTasks response not received');
-      }, 5000);
-      socket.once('fetchTasks', (data) => {
-        clearTimeout(timeout);
-        if (data.success) {
-          resolve(data.tasks);
-        } else {
-          reject(data.message || `Server Error: ${JSON.stringify(data)}`);
-        }
-      });
-    });
+    const response = await fetch('https://todo-in-react-hizb.onrender.com/api/task/get',{method:"GET"});
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`HTTP error! Status: ${response.status}, Message: ${errorText}`);
+      return thunkAPI.rejectWithValue(`Failed to fetch tasks: ${response.statusText} - ${errorText}`);
+    } else {
+      const data = await response.json();
+      // Assuming the backend directly returns an array of tasks, or an object with a 'tasks' array
+      if (Array.isArray(data)) {
+        return data; // If the API returns an array directly
+      } else if (data && Array.isArray(data.tasks)) {
+        return data.tasks; // If the API returns { success: true, tasks: [...] }
+      } else {
+        // If the response structure is unexpected, reject the thunk
+        console.error('Unexpected response format:', data);
+        return thunkAPI.rejectWithValue(data.message || 'Unexpected response format from server');
+      }
+    }
   } catch (error) {
-    return thunkAPI.rejectWithValue(error);
+    return thunkAPI.rejectWithValue(error.message);
   }
 });
-
 
 export const addTask = createAsyncThunk('tasks/addTask', async (taskData, thunkAPI) => {
   try {
