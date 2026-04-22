@@ -7,25 +7,24 @@ export const socket = io('https://todo-in-react-hizb.onrender.com');
 
 export const fetchTasks = createAsyncThunk('tasks/fetchTasks', async (_, thunkAPI) => {
   try {
-    const response = await fetch('https://todo-in-react-hizb.onrender.com/api/task/get',{method:"GET"});
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`HTTP error! Status: ${response.status}, Message: ${errorText}`);
-      return thunkAPI.rejectWithValue(`Failed to fetch tasks: ${response.statusText} - ${errorText}`);
-    } else {
-      const data = await response.json();
-      // Assuming the backend directly returns an array of tasks, or an object with a 'tasks' array
-      if (Array.isArray(data)) {
-        return data; // If the API returns an array directly
-      } else if (data && Array.isArray(data.tasks)) {
-        return data.tasks; // If the API returns { success: true, tasks: [...] }
-      } else {
-        // If the response structure is unexpected, reject the thunk
-        console.error('Unexpected response format:', data);
-        return thunkAPI.rejectWithValue(data.message || 'Unexpected response format from server');
-      }
-    }
+    return await new Promise((resolve, reject) => {
+      socket.emit('task/fetchTasks');
+      const timeout = setTimeout(() => {
+        socket.off('fetchTasks');
+        reject('Timeout: fetchTasks response not received');
+      }, 5000);
+      socket.once('fetchTasks', (data) => {
+        clearTimeout(timeout);
+        // Check if data is a direct array (as seen in your text.txt) or wrapped in an object
+        if (Array.isArray(data)) {
+          resolve(data);
+        } else if (data.success) {
+          resolve(data.tasks);
+        } else {
+          reject(data.message || 'Failed to fetch tasks');
+        }
+      });
+    });
   } catch (error) {
     return thunkAPI.rejectWithValue(error.message);
   }
